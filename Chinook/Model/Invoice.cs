@@ -7,5 +7,6 @@ namespace Chinook.Model
 {
     public class Invoice
     {
+        public Customer Customer { get; set; }
     }
 }
