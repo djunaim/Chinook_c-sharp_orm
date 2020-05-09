@@ -5,11 +5,8 @@ using System.Threading.Tasks;
 
 namespace Chinook.Model
 {
-    public class Customer
+    public class InvoiceWithCustomerData
     {
         public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Country { get; set; }
-        public int CustomerId { get; set; }
     }
 }

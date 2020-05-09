@@ -25,10 +25,21 @@ namespace Chinook.Controllers
         }
 
         [HttpGet("invoice/{country}")]
-        public IActionResult GetInvoiceByCountry(string country)
+        public IActionResult GetCustomerInvoiceByCountry(string country)
         {
-            var customers = _repository.GetInvoiceByCountry(country);
+            var customers = _repository.GetCustomerInvoiceByCountry(country);
             if (!customers.Any())
+            {
+                return NotFound();
+            }
+            return Ok(customers);
+        }
+
+        [HttpGet("nonusa/{country}")]
+        public IActionResult GetAllNonUsaCustomers(string country)
+        {
+            var customers = _repository.GetAllNonUsaCustomers(country);
+            if(!customers.Any())
             {
                 return NotFound();
             }

@@ -15,9 +15,9 @@ namespace Chinook.Controllers
         EmployeeRepository _employeeRepository = new EmployeeRepository();
 
         [HttpGet("{title}")]
-        public IActionResult GetEmployee(string title)
+        public IActionResult GetEmployeeByTitle(string title)
         {
-            var employees = _employeeRepository.GetEmployee(title);
+            var employees = _employeeRepository.GetEmployeeByTitle(title);
             if (!employees.Any())
             {
                 return NotFound();

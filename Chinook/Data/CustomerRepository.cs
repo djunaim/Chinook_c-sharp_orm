@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
+using Dapper;
 
 namespace Chinook.Data
 {
@@ -15,34 +16,13 @@ namespace Chinook.Data
                         from Customer
                         where Customer.Country = @Country";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var db = new SqlConnection(ConnectionString))
             {
-                connection.Open();
-
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = sql;
-
-                cmd.Parameters.AddWithValue("Country", country);
-
-                var reader = cmd.ExecuteReader();
-
-                var customers = new List<Customer>();
-
-                while (reader.Read())
-                {
-                    var customer = new Customer
-                    {
-                        FirstName = (string)reader["FirstName"],
-                        LastName = (string)reader["LastName"],
-                    };
-
-                    customers.Add(customer);
-                }
-                return customers;
+                return db.Query<Customer>(sql, new { Country = country}).AsList();
             }
         }
 
-        public List<Customer> GetInvoiceByCountry(string country)
+        public List<InvoiceWithCustomerData> GetCustomerInvoiceByCountry(string country)
         {
             var sql = @"select Customer.FirstName, 
                         Customer.LastName, 
@@ -54,30 +34,21 @@ namespace Chinook.Data
 		                        on Customer.CustomerId = Invoice.CustomerId
                         where Customer.Country = @Country";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var db = new SqlConnection(ConnectionString))
             {
-                connection.Open();
+                return db.Query<InvoiceWithCustomerData>(sql, new { Country = country }).AsList();
+            }
+        }
 
-                var cmd = connection.CreateCommand();
-                cmd.CommandText = sql;
+        internal List<Customer> GetAllNonUsaCustomers(string country)
+        {
+            var sql = @"select Customer.FirstName, Customer.LastName, Customer.Country
+                        from Customer
+                        where Customer.Country != @Country";
 
-                cmd.Parameters.AddWithValue("Country", country);
-
-                var reader = cmd.ExecuteReader();
-
-                var customers = new List<Customer>();
-
-                while (reader.Read())
-                {
-                    var customer = new Customer
-                    {
-                        FirstName = (string)reader["FirstName"],
-                        LastName = (string)reader["LastName"],
-                    };
-
-                    customers.Add(customer);
-                }
-                return customers;
+            using (var db = new SqlConnection(ConnectionString))
+            {
+                return db.Query<Customer>(sql, new { Country = country }).AsList();
             }
         }
     }
